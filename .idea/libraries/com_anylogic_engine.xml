@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="com.anylogic.engine">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/com.anylogic.engine.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.anylogic.engine.sa.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/Core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jts-core-1.16.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/LevelSystem.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/MarkupDescriptors.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/NavigationMesh.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/OptQuest.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/PedestrianLibrary.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ProcessModelingLibrary.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/RailLibrary.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/RoadTrafficLibrary.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
