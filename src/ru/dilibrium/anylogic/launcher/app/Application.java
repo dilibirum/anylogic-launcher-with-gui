@@ -17,7 +17,7 @@ public class Application {
 
     private final int MAIN_FRAME_WIDTH = 1600;
     private final int MAIN_FRAME_HEIGHT = 900;
-    private final String TITLE = Configs.load().get("title").toString();
+    private final String TITLE = Configs.load().get("model.title").toString();
     private final URL IMG_URL = Application.class.getResource("/app-icon.png");
     private final URL BACK_IMG_URL = Application.class.getResource("/back-img.png");
 
@@ -53,11 +53,13 @@ public class Application {
         JPanel panel = new JPanel();
         panel.setLayout(null);
 
-        JButton simulationBtn = new JButton("Симуляция");
-        simulationBtn.setSize(100, 50);
-        simulationBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        JButton simulationBtn = new JButton(Configs.get("simulation.btnTitle"));
+        simulationBtn.setSize(200, 50);
+
+        // обработчик нажатия кнопки
+        simulationBtn.addActionListener(e -> {
+
+            new Thread(() -> {
                 try {
                     Launcher.of(Experiment.SIMULATION).start();
                 } catch (RuntimeException ex) {
@@ -65,13 +67,32 @@ public class Application {
                             "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
                     );
                 }
-            }
+            }).start();
+
         });
-        JButton optimizationBtn = new JButton("Оптимизация");
+
+        /*
+        JButton optimizationBtn = new JButton(Configs.get("optimization.btnTitle"));
         optimizationBtn.setSize(100, 50);
 
+        // обработчик нажатия кнопки
+        optimizationBtn.addActionListener(e -> {
+
+           new Thread(() -> {
+                try {
+                    Launcher.of(Experiment.OPTIMIZATION).start();
+                } catch (RuntimeException ex) {
+                    System.out.println(
+                            "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
+                    );
+                }
+            }).start();
+
+        });
+        */
+
         panel.add(simulationBtn);
-        panel.add(optimizationBtn);
+        //panel.add(optimizationBtn);
 
         mainFrame.add(panel);
 

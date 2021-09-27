@@ -5,6 +5,6 @@ import ru.dilibrium.anylogic.launcher.app.Application;
 public class Main {
 
     public static void main(String[] args) {
-        new Application();
+        new Thread(Application::new).start();
     }
 }
