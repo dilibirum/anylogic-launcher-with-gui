@@ -1,9 +1,11 @@
 package ru.dilibrium.anylogic.launcher.app;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -15,8 +17,8 @@ import java.util.Objects;
  */
 public class Application {
 
-    private final int MAIN_FRAME_WIDTH = 1600;
-    private final int MAIN_FRAME_HEIGHT = 900;
+    private final int MAIN_FRAME_WIDTH = 1200;
+    private final int MAIN_FRAME_HEIGHT = 780;
     private final String TITLE = Configs.load().get("model.title").toString();
     private final URL IMG_URL = Application.class.getResource("/app-icon.png");
     private final URL BACK_IMG_URL = Application.class.getResource("/back-img.png");
@@ -33,89 +35,70 @@ public class Application {
         mainFrame.setLocationRelativeTo(null);
 
         // Добавляем задний фон
-        Icon imgIcon = null;
-        if (BACK_IMG_URL != null) {
-            imgIcon = new ImageIcon(BACK_IMG_URL);
-            JLabel label = new JLabel(imgIcon, SwingConstants.CENTER);
-            label.setSize(MAIN_FRAME_WIDTH,MAIN_FRAME_HEIGHT);
-            mainFrame.add(label);
-        }
+        JPanel panel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                Image img = null;
+                try {
+                    img = ImageIO.read(
+                            new File(
+                                    Objects.requireNonNull(BACK_IMG_URL).toURI()
+                            )
+                    );
+                } catch (IOException | URISyntaxException e) {
+                    mainFrame.getContentPane()
+                            .setBackground(
+                                    Color.decode(
+                                            Objects.requireNonNull(
+                                                    Configs.get("colors.background")
+                                            )
+                                    )
+                            );
+                    e.printStackTrace();
+                }
+                super.paintComponent(g);
+                g.drawImage(img, 0, 0, mainFrame.getWidth(), mainFrame.getHeight(), null);
+            }
+        };
 
-        mainFrame.getContentPane()
-                 .setBackground(
-                         Color.decode(
-                                 Objects.requireNonNull(
-                                         Configs.get("colors.background")
-                                 )
-                         )
-                 );
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-
+        // кнопка запуска простого эксперимента
         JButton simulationBtn = new JButton(Configs.get("simulation.btnTitle"));
-        simulationBtn.setSize(200, 50);
-
-        // обработчик нажатия кнопки
-        simulationBtn.addActionListener(e -> {
-
-            new Thread(() -> {
-                try {
-                    Launcher.of(Experiment.SIMULATION).start();
-                } catch (RuntimeException ex) {
-                    System.out.println(
-                            "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
-                    );
-                }
-            }).start();
-
-        });
-
-        /*
-        JButton optimizationBtn = new JButton(Configs.get("optimization.btnTitle"));
-        optimizationBtn.setSize(100, 50);
-
-        // обработчик нажатия кнопки
-        optimizationBtn.addActionListener(e -> {
-
-           new Thread(() -> {
-                try {
-                    Launcher.of(Experiment.OPTIMIZATION).start();
-                } catch (RuntimeException ex) {
-                    System.out.println(
-                            "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
-                    );
-                }
-            }).start();
-
-        });
-        */
-
+        simulationBtn.setSize(300, 100);
         panel.add(simulationBtn);
-        //panel.add(optimizationBtn);
+
+        // кнопка запуска оптимизационного эксперимента
+        JButton optimizationBtn = new JButton(Configs.get("optimization.btnTitle"));
+        optimizationBtn.setSize(300, 100);
+        panel.add(optimizationBtn);
 
         mainFrame.add(panel);
 
         mainFrame.setVisible(true);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    }
-/*
-    {
-        try {
-            Launcher.of(Experiment.SIMULATION).start();
-        } catch (RuntimeException ex) {
-            System.out.println(
-                    "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
-            );
-        }
+        // обработчики нажатия кнопки
+        optimizationBtn.addActionListener(e -> new Thread(() -> {
+            try {
+                Launcher.create(Experiment.OPTIMIZATION).start();
+            } catch (RuntimeException ex) {
+                System.out.println(
+                        "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
+                );
+            }
+        }).start());
 
-        try {
-            Launcher.of(Experiment.OPTIMIZATION).start();
-        } catch (RuntimeException ex) {
-            System.out.println(
-                    "WARNING: для запуска оптимизационного эксперимента, сначала завершите текущий эксперимент"
-            );
-        }
-    }*/
+        simulationBtn.addActionListener(e -> new Thread(() -> {
+            try {
+                Launcher.create(Experiment.SIMULATION).start();
+            } catch (RuntimeException ex) {
+                System.out.println(
+                        "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
+                );
+                ex.printStackTrace();
+            }
+        }).start());
+
+    }
 }

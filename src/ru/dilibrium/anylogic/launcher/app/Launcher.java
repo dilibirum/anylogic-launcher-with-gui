@@ -15,7 +15,7 @@ import ru.dilibrium.anylogic.ds54.ob.Simulation;
 public class Launcher {
 
     /**
-     * Простой жксперимент
+     * Простой эксперимент
      */
     private final Simulation simulation = new Simulation();
 
@@ -38,7 +38,7 @@ public class Launcher {
      * @return созданный загрузчик
      * @throws NullPointerException в случае, когда загрузчик создать не удалось
      */
-    public static Launcher of(Experiment experiment) throws NullPointerException {
+    public static Launcher create(Experiment experiment) throws NullPointerException {
         Launcher launcher = new Launcher();
         launcher.experiment = experiment;
         return launcher;
