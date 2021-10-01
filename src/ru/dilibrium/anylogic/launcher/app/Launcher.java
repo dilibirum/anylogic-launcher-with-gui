@@ -1,71 +1,44 @@
 package ru.dilibrium.anylogic.launcher.app;
 
-import com.anylogic.engine.gui.ExperimentHost;
-import com.anylogic.engine.gui.IExperimentHost;
-import ru.dilibrium.anylogic.ds54.ob.Optimization;
-import ru.dilibrium.anylogic.ds54.ob.Simulation;
+import ru.dilibrium.anylogic.launcher.core.JavaProcess;
+import java.io.IOException;
 
 /**
  * <b>Загрузчик экспериментов модели</b><br/><br/>
  *
  * <br/>
  * @author ООО "Дилибриум"<br/>Техническая поддержка: <a href="mailto:support@dilibrium.ru">support@dilibrium.ru</a>
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class Launcher {
 
     /**
-     * Простой эксперимент
+     * Класс экспериента модели
      */
-    private final Simulation simulation = new Simulation();
-
-    /**
-     * Оптимизационный эксперимент
-     */
-    private final Optimization optimization = new Optimization();
-
-    /**
-     * Наименование эусперимента, реализует выбор эксперимента для запуска
-     */
-    private Experiment experiment;
+    private Class modelClass;
 
     private Launcher() {
     }
 
     /**
      * Инициализация нового загрузчика
-     * @param experiment тип эксперимента
+     * @param modelClass тип эксперимента
      * @return созданный загрузчик
-     * @throws NullPointerException в случае, когда загрузчик создать не удалось
      */
-    public static Launcher create(Experiment experiment) throws NullPointerException {
+    public static Launcher create(Class modelClass) {
         Launcher launcher = new Launcher();
-        launcher.experiment = experiment;
+        launcher.modelClass = modelClass;
         return launcher;
     }
 
     /**
      * Метод запуска эксперимента
-     * @throws RuntimeException в случае одновременного запуска нескольких экспериментов на одном сервере
+     * @throws IOException
+     * @throws InterruptedException
      */
-    public void start() throws RuntimeException {
-
-        switch (this.experiment) {
-            case SIMULATION:
-            default:
-                IExperimentHost simulationHost = new ExperimentHost(simulation);
-                simulation.setup(simulationHost);
-                simulationHost.launch();
-
-                break;
-            case OPTIMIZATION:
-                IExperimentHost optimizationHost = new ExperimentHost(optimization);
-                optimization.setup(optimizationHost);
-                optimizationHost.launch();
-
-                break;
-        }
-
-        System.out.println(this.experiment + " experiment started!");
+    public void start() throws IOException, InterruptedException {
+        System.out.println(modelClass.getSimpleName() + " started!");
+        int finishCode = JavaProcess.exec(modelClass);
+        System.out.println(modelClass.getSimpleName() + " finished with code " + finishCode);
     }
 }

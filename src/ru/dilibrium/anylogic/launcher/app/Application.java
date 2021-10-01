@@ -1,5 +1,9 @@
 package ru.dilibrium.anylogic.launcher.app;
 
+import ru.dilibrium.anylogic.ds54.ob.Optimization;
+import ru.dilibrium.anylogic.ds54.ob.Simulation;
+import ru.dilibrium.anylogic.launcher.core.JavaProcess;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +17,7 @@ import java.util.Objects;
  * <b>Приложение (интерфейс) выбора и запуска нескольких экспериментов модели</b><br/><br/>
  *
  * @author ООО "Дилибриум"<br/>Техническая поддержка: <a href="mailto:support@dilibrium.ru">support@dilibrium.ru</a>
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class Application {
 
@@ -33,6 +37,7 @@ public class Application {
         mainFrame.setSize(MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
         mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(null);
+        mainFrame.setUndecorated(true);
 
         // Добавляем задний фон
         JPanel panel = new JPanel(){
@@ -73,6 +78,11 @@ public class Application {
         optimizationBtn.setSize(300, 100);
         panel.add(optimizationBtn);
 
+        // кнопка закрытия приложения
+        JButton closeBtn = new JButton("Закрыть");
+        closeBtn.setSize(300, 100);
+        panel.add(closeBtn);
+
         mainFrame.add(panel);
 
         mainFrame.setVisible(true);
@@ -81,24 +91,29 @@ public class Application {
         // обработчики нажатия кнопки
         optimizationBtn.addActionListener(e -> new Thread(() -> {
             try {
-                Launcher.create(Experiment.OPTIMIZATION).start();
-            } catch (RuntimeException ex) {
-                System.out.println(
-                        "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
-                );
+                Launcher.create(Optimization.class).start();
+            } catch (IOException | InterruptedException exception) {
+                exception.printStackTrace();
             }
         }).start());
 
         simulationBtn.addActionListener(e -> new Thread(() -> {
             try {
-                Launcher.create(Experiment.SIMULATION).start();
-            } catch (RuntimeException ex) {
-                System.out.println(
-                        "WARNING: для запуска простого эксперимента, сначала завершите текущий эксперимент"
-                );
-                ex.printStackTrace();
+                Launcher.create(Simulation.class).start();
+            } catch (IOException | InterruptedException exception) {
+                exception.printStackTrace();
             }
         }).start());
+
+        closeBtn.addActionListener(e -> {
+            if (!JavaProcess.getAllOpenProcesses().isEmpty()) {
+                System.out.println(JavaProcess.getAllOpenProcesses());
+                for (Process process: JavaProcess.getAllOpenProcesses()) {
+                    process.destroy();
+                }
+            }
+            System.exit(0);
+        });
 
     }
 }
