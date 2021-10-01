@@ -1,4 +1,4 @@
-package ru.dilibrium.anylogic.launcher.app;
+package ru.dilibrium.anylogic.launcher.core;
 
 import java.io.InputStreamReader;
 import java.io.InputStream;

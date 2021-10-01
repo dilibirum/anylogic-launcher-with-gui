@@ -1,6 +1,5 @@
-package ru.dilibrium.anylogic.launcher.app;
+package ru.dilibrium.anylogic.launcher.core;
 
-import ru.dilibrium.anylogic.launcher.core.JavaProcess;
 import java.io.IOException;
 
 /**
